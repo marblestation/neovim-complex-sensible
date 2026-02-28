@@ -162,7 +162,26 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 
 --------------------------------------------------------------------------------
 -- Clipboard Behavior
-vim.opt.clipboard = "" -- Prevents Neovim from using the system clipboard
+
+-- The clipboard provider:
+-- Force Neovim to use OSC 52 so that clipboard access survives `sudo` and SSH
+-- This sends copied text safely through the terminal's raw text stream, it requires a modern terminal
+-- and tmux.conf to have `set -g set-clipboard on`
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+  },
+  paste = {
+    ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+  },
+}
+
+-- Prevents Neovim from syncing with the system clipboard by default, 
+-- keeping your standard yank/paste operations entirely inside Neovim
+vim.opt.clipboard = "" 
 
 -- Toggle Clipboard Function
 function ToggleClipboard()
@@ -175,15 +194,15 @@ function ToggleClipboard()
     end
 end
 
--- Set keybinding to <leader>tc
+-- Set keybinding to <leader>tc to toggle the global clipboard sync
 vim.keymap.set("n", "<leader>tc", ":lua ToggleClipboard()<CR>", { remap = false, silent = true })
 
--- Yank to system clipboard
+-- Explicitly yank to the system clipboard
 vim.keymap.set("n", "<leader>y", '"+y', { remap = false, silent = true })
 vim.keymap.set("v", "<leader>y", '"+y', { remap = false, silent = true })
 vim.keymap.set("n", "<leader>Y", '"+Y', { remap = false, silent = true }) -- Yank entire line
 
--- Paste from system clipboard
+-- Explicitly paste from the system clipboard
 vim.keymap.set("n", "<leader>p", '"+p', { remap = false, silent = true })
 vim.keymap.set("n", "<leader>P", '"+P', { remap = false, silent = true })
 vim.keymap.set("v", "<leader>p", '"+p', { remap = false, silent = true })
