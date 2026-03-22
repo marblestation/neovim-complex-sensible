@@ -163,21 +163,23 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 --------------------------------------------------------------------------------
 -- Clipboard Behavior
 
--- The clipboard provider:
--- Force Neovim to use OSC 52 so that clipboard access survives `sudo` and SSH
--- This sends copied text safely through the terminal's raw text stream, it requires a modern terminal
--- and tmux.conf to have `set -g set-clipboard on`
-vim.g.clipboard = {
-  name = 'OSC 52',
-  copy = {
-    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-  },
-  paste = {
-    ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-    ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-  },
-}
+if not vim.g.neovide then
+    -- The clipboard provider:
+    -- Force Neovim to use OSC 52 so that clipboard access survives `sudo` and SSH
+    -- This sends copied text safely through the terminal's raw text stream, it requires a modern terminal
+    -- and tmux.conf to have `set -g set-clipboard on`
+    vim.g.clipboard = {
+      name = 'OSC 52',
+      copy = {
+        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+      },
+      paste = {
+        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+      },
+    }
+end
 
 -- Prevents Neovim from syncing with the system clipboard by default, 
 -- keeping your standard yank/paste operations entirely inside Neovim
