@@ -163,7 +163,10 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 --------------------------------------------------------------------------------
 -- Clipboard Behavior
 
-if not vim.g.neovide then
+if vim.g.vscode then
+    -- Use the editor's clipboard API when embedded in VSCode/VSCodium.
+    vim.g.clipboard = vim.g.vscode_clipboard
+elseif not vim.g.neovide then
     -- The clipboard provider:
     -- Force Neovim to use OSC 52 so that clipboard access survives `sudo` and SSH
     -- This sends copied text safely through the terminal's raw text stream, it requires a modern terminal
